@@ -12,10 +12,10 @@ class OrdersController < ApplicationController
     # @trip_type = params["itinerary_type"]
 
     @uuid = SecureRandom.uuid
-    #@ori_airport = Airport.find(params[:ori_airport_id])
-    #@des_airport = Airport.find(params[:des_airport_id])
-    #@date_depart = params[:date_depart]
-    #@date_return = params[:date_return]
+    @ori_airport = Airport.find(params[:ori_airport_id])
+    @des_airport = Airport.find(params[:des_airport_id])
+    @date_depart = params[:date_depart]
+    @date_return = params[:date_return]
     @adult = params[:adult_num].to_i
     @child = params[:child_num].to_i
     @infant = params[:infant_num].to_i
@@ -56,8 +56,18 @@ class OrdersController < ApplicationController
       flight_return = @order.flights.build
       flight_return.category = :return
     end
-    #byebug
-      
+
+    SearchFlightsJob.perform_later(
+      uuid: @uuid,
+      ori_code: @ori_airport.code,
+      des_code: @des_airport.code,
+      date_depart: @date_depart,
+      date_return: @date_return,
+      adult: @adult,
+      child: @child,
+      infant: @infant,
+      round_type: params[:itinerary_type]
+    )
   end
 
   def create

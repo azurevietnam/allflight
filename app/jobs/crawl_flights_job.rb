@@ -19,7 +19,6 @@ class CrawlFlightsJob < ApplicationJob
           ori_airport = Airport.find(route.ori_airport_id)
           date_depart = DateTime.now.to_date + (5 + i).days
           date_return = DateTime.now.to_date + (5 + i).days
-          #REDIS.del "proxies"
           params = {
             uuid: uuid,
             ori_code: ori_airport.code,
